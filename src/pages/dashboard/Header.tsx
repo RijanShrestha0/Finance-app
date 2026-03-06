@@ -20,8 +20,17 @@ const Header = () => {
     };
 
     return (
-        <header className="dashboard-header">
-            <h1 className="dashboard-title">Dashboard</h1>
+        <>
+            <header className="dashboard-header">
+            
+            <h1 className="dashboard-title">
+                <div className="logo-header-icon">
+                    <img src="/src/assets/finance-logo.svg" alt="Finance logo" className="logo-image" />
+                </div>
+                <div className="dashboard-t1">
+                    Dashboard
+                </div>
+                </h1>
             <div className="header-action">
                 <div className="notification-wrapper" ref={notificationRef}>
                     <button onClick={handleToggleNotifications} className="btn-icon">
@@ -46,6 +55,8 @@ const Header = () => {
                 </div>
             </div>
         </header>
+
+        </>
     );
 };
 
