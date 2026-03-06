@@ -75,8 +75,8 @@
 }
 
 .sidebar-nav-item.active {
-  background-color: var(--accent);
-  color: var(--text-main);
+  background-color: var(--accent-blue);
+  color: var(--brand-bg);
 }
 
 .sidebar-nav-item.inactive {

@@ -1,7 +1,7 @@
 import React from "react";
 import useNotifications from "../../hooks/useNotifications";
 import useClickOutside from "../../hooks/useClickOutside";
-import { AnimatePresence, px } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import NotificationDropdown from "./NotificationDropdown";
 import { Bell } from "lucide-react";
 import './Header.css';
