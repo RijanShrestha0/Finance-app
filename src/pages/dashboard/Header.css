@@ -7,11 +7,10 @@
   backdrop-filter: blur(10px);
   position: sticky;
   padding-top: 5rem;
-  margin-top: -3.5rem;
-  z-index: 40;
-  /* margin-left: 15rem; */
-  transition: background-color 0.3s ease;
-  overflow-x: hidden;
+  margin-top: -2.5rem;
+  padding-bottom: 2.5rem;
+  z-index: 20;
+  height: 6.5rem;
 }
 
 .logo-header-icon { 
@@ -37,7 +36,7 @@
   font-size: 1.875rem;
   font-weight: 400;
   color: var(--text-main);
-  margin-left: 5rem;
+  margin-left: 15rem;
 }
 
 .header-action {
@@ -102,6 +101,7 @@
 
 .notification-dropdown {
   position: absolute;
+  top: 100%;
   right: 0;
   margin-top: 0.75rem;
   width: 20rem;
@@ -155,6 +155,18 @@
 
 .notification-mark-read:hover {
   color: var(--text-main);
+}
+
+.mark-all-read-btn{
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--border-subtle);
+  cursor: pointer;
+  transition: border-color 0.25s;
 }
 
 .notification-list {

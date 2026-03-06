@@ -24,9 +24,9 @@ const Header = () => {
             <header className="dashboard-header">
             
             <h1 className="dashboard-title">
-                <div className="logo-header-icon">
+                {/* <div className="logo-header-icon">
                     <img src="/src/assets/finance-logo.svg" alt="Finance logo" className="logo-image" />
-                </div>
+                </div> */}
                 <div className="dashboard-t1">
                     Dashboard
                 </div>

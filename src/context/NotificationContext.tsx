@@ -14,7 +14,7 @@ interface NotificationContextType {
     markAsRead: (id: string) => void;
     markAllAsRead: () => void;
     showToast: boolean;
-    ToastMessage: string;
+    toastMessage: string;
     hideToast: () => void;    
 }
 
@@ -23,7 +23,7 @@ export const NotificationContext = React.createContext<NotificationContextType |
 export const NotificationProvider = ({ children }: { children: React.ReactNode }) => {
     const [ notifications, setNotifications] = React.useState<Notification[]>([]);
     const [ showToast, setShowToast ] = React.useState(false);
-    const [ ToastMessage, setToastMessage ] = React.useState('');
+    const [ toastMessage, setToastMessage ] = React.useState('');
 
     const unreadCount = notifications.filter (n => !n.read).length;
 
@@ -52,7 +52,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
     };
 
     return (
-        <NotificationContext.Provider value={{ notifications, unreadcount: unreadCount, addNotification, markAsRead, markAllAsRead, showToast, ToastMessage, hideToast }}>
+        <NotificationContext.Provider value={{ notifications, unreadcount: unreadCount, addNotification, markAsRead, markAllAsRead, showToast, toastMessage, hideToast }}>
             {children}
         </NotificationContext.Provider>
     );

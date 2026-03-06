@@ -25,7 +25,7 @@ const NotificationDropdown = ({
         <div className="notification-dropdown-header">
             <div className="notification-dropdown-title">Notifications</div>
             {unreadcount > 0 && (
-                <button className="mark-all-read" onClick={markAllAsRead}>
+                <button className="mark-all-read-btn" onClick={markAllAsRead}>
                     Mark all as read
                 </button>
             )}
