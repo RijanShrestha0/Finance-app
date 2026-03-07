@@ -1,4 +1,4 @@
-import { useTransactions } from "../../context/TransactionContext";
+import { useTransactions } from "../../hooks/useTransactions";
 import StatCard from "../../components/ui/StatCard";
 import './StatsGrid.css';
 
