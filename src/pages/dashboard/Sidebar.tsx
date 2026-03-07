@@ -1,4 +1,4 @@
-import { LayoutDashboard, ArrowLeftRight, Target, BarChart3, Settings, Download, LogIn, } from "lucide-react";
+import { LayoutDashboard, ArrowLeftRight, Target, BarChart3, Settings, Download, User } from "lucide-react";
 import './Sidebar.css';
 import { Button } from "../../components/button/Button";
 
@@ -54,8 +54,8 @@ export const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
                     <span className="footer-label">Download</span>
                 </button>
                 <button className="footer-item">
-                    <LogIn className="footer-icon" />
-                    <span className="footer-label">Login/Signup</span>
+                    <User className="footer-icon" />
+                    <span className="footer-label">User Name</span>
                 </button>
             </div>
         </aside>
