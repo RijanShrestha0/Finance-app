@@ -1,5 +1,5 @@
 import { useTransactions } from "../../context/TransactionContext";
-import StatCard from "./StatCard";
+import StatCard from "../../components/ui/StatCard";
 import './StatsGrid.css';
 
 const StatsGrid = () => {
