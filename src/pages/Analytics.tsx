@@ -1,5 +1,5 @@
 import React from 'react';
-import './Analytics.css';
+import './GlobalStyle.css';
 
 const Analytics: React.FC = () => {
   return (
