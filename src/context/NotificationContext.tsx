@@ -21,9 +21,17 @@ interface NotificationContextType {
 export const NotificationContext = React.createContext<NotificationContextType | undefined>(undefined);
 
 export const NotificationProvider = ({ children }: { children: React.ReactNode }) => {
-    const [ notifications, setNotifications] = React.useState<Notification[]>([]);
+    const [ notifications, setNotifications] = React.useState<Notification[]>(() => {
+        const saved = localStorage.getItem('notifications');
+        return saved ? JSON.parse(saved) : [];
+    });
     const [ showToast, setShowToast ] = React.useState(false);
     const [ toastMessage, setToastMessage ] = React.useState('');
+
+    // Save notifications to localStorage whenever they change
+    React.useEffect(() => {
+        localStorage.setItem('notifications', JSON.stringify(notifications));
+    }, [notifications]);
 
     const unreadCount = notifications.filter (n => !n.read).length;
 

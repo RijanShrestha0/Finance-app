@@ -11,7 +11,7 @@ export interface Transaction {
   category: string;
   description: string;
   amount: number;
-  type: 'Income' | 'Expenses';
+  type: 'Income' | 'Expense';
 }
 
 export interface TransactionStats {
@@ -35,7 +35,7 @@ export interface TransactionContextType {
   addTransaction: (transaction: Omit<Transaction, 'id' | 'userId'>) => void;
   incomeCategories: string[];
   expenseCategories: string[];
-  addCategory: (category: string, type: 'Income' | 'Expenses') => void;
+  addCategory: (category: string, type: 'Income' | 'Expense') => void;
   dateRange: DateRange | undefined;
   setDateRange: (range: DateRange | undefined) => void;
   activeFilter: string;
@@ -53,28 +53,20 @@ export const TransactionContext = createContext<TransactionContextType | undefin
 export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   
+  // Initialize with stored data if available, regardless of user auth status
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
-    if (user) {
-      const saved = localStorage.getItem(`transactions_${user.id}`);
-      return saved ? JSON.parse(saved) : [];
-    }
-    return [];
+    const saved = localStorage.getItem('transactions_default');
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [incomeCategories, setIncomeCategories] = useState<string[]>(() => {
-    if (user) {
-      const saved = localStorage.getItem(`incomeCategories_${user.id}`);
-      return saved ? JSON.parse(saved) : INITIAL_INCOME_CATEGORIES;
-    }
-    return INITIAL_INCOME_CATEGORIES;
+    const saved = localStorage.getItem('incomeCategories_default');
+    return saved ? JSON.parse(saved) : INITIAL_INCOME_CATEGORIES;
   });
   
   const [expenseCategories, setExpenseCategories] = useState<string[]>(() => {
-    if (user) {
-      const saved = localStorage.getItem(`expenseCategories_${user.id}`);
-      return saved ? JSON.parse(saved) : INITIAL_EXPENSE_CATEGORIES;
-    }
-    return INITIAL_EXPENSE_CATEGORIES;
+    const saved = localStorage.getItem('expenseCategories_default');
+    return saved ? JSON.parse(saved) : INITIAL_EXPENSE_CATEGORIES;
   });
 
   const [activeFilter, setActiveFilter] = useState('Month');
@@ -84,19 +76,13 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const [currency, setCurrency] = useState<string>(() => {
-    if (user) {
-      const saved = localStorage.getItem(`currency_${user.id}`);
-      return saved || 'Rs.';
-    }
-    return 'Rs.';
+    const saved = localStorage.getItem('currency_default');
+    return saved || 'Rs.';
   });
 
   const [budgetLimit, setBudgetLimit] = useState<number>(() => {
-    if (user) {
-      const saved = localStorage.getItem(`budgetLimit_${user.id}`);
-      return saved ? parseFloat(saved) : 0;
-    }
-    return 0;
+    const saved = localStorage.getItem('budgetLimit_default');
+    return saved ? parseFloat(saved) : 0;
   });
 
   const [stats, setStats] = useState<TransactionStats>({
@@ -117,54 +103,54 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (user) {
       const savedTransactions = localStorage.getItem(`transactions_${user.id}`);
-      setTransactions(savedTransactions ? JSON.parse(savedTransactions) : []);
+      setTransactions(savedTransactions ? JSON.parse(savedTransactions) : JSON.parse(localStorage.getItem('transactions_default') || '[]'));
       
       const savedIncome = localStorage.getItem(`incomeCategories_${user.id}`);
-      setIncomeCategories(savedIncome ? JSON.parse(savedIncome) : INITIAL_INCOME_CATEGORIES);
+      setIncomeCategories(savedIncome ? JSON.parse(savedIncome) : JSON.parse(localStorage.getItem('incomeCategories_default') || JSON.stringify(INITIAL_INCOME_CATEGORIES)));
       
       const savedExpense = localStorage.getItem(`expenseCategories_${user.id}`);
-      setExpenseCategories(savedExpense ? JSON.parse(savedExpense) : INITIAL_EXPENSE_CATEGORIES);
+      setExpenseCategories(savedExpense ? JSON.parse(savedExpense) : JSON.parse(localStorage.getItem('expenseCategories_default') || JSON.stringify(INITIAL_EXPENSE_CATEGORIES)));
 
       const savedCurrency = localStorage.getItem(`currency_${user.id}`);
-      setCurrency(savedCurrency || 'Rs.');
+      setCurrency(savedCurrency || localStorage.getItem('currency_default') || 'Rs.');
 
       const savedBudget = localStorage.getItem(`budgetLimit_${user.id}`);
-      setBudgetLimit(savedBudget ? parseFloat(savedBudget) : 0);
-    } else {
-      setTransactions([]);
-      setIncomeCategories(INITIAL_INCOME_CATEGORIES);
-      setExpenseCategories(INITIAL_EXPENSE_CATEGORIES);
-      setCurrency('Rs.');
-      setBudgetLimit(0);
+      setBudgetLimit(savedBudget ? parseFloat(savedBudget) : parseFloat(localStorage.getItem('budgetLimit_default') || '0'));
     }
+    // Don't clear data when user logs out - keep showing existing data from localStorage
   }, [user]);
 
   // Save to localStorage whenever data changes
   useEffect(() => {
+    localStorage.setItem('transactions_default', JSON.stringify(transactions));
     if (user) {
       localStorage.setItem(`transactions_${user.id}`, JSON.stringify(transactions));
     }
   }, [transactions, user]);
 
   useEffect(() => {
+    localStorage.setItem('incomeCategories_default', JSON.stringify(incomeCategories));
     if (user) {
       localStorage.setItem(`incomeCategories_${user.id}`, JSON.stringify(incomeCategories));
     }
   }, [incomeCategories, user]);
 
   useEffect(() => {
+    localStorage.setItem('expenseCategories_default', JSON.stringify(expenseCategories));
     if (user) {
       localStorage.setItem(`expenseCategories_${user.id}`, JSON.stringify(expenseCategories));
     }
   }, [expenseCategories, user]);
 
   useEffect(() => {
+    localStorage.setItem('currency_default', currency);
     if (user) {
       localStorage.setItem(`currency_${user.id}`, currency);
     }
   }, [currency, user]);
 
   useEffect(() => {
+    localStorage.setItem('budgetLimit_default', budgetLimit.toString());
     if (user) {
       localStorage.setItem(`budgetLimit_${user.id}`, budgetLimit.toString());
     }
@@ -196,7 +182,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       .reduce((acc, t) => acc + t.amount, 0);
     
     const currentExpenses = currentMonthTransactions
-      .filter((t) => t.type === 'Expenses')
+      .filter((t) => t.type === 'Expense')
       .reduce((acc, t) => acc + t.amount, 0);
 
     // Prev Month Stats
@@ -205,7 +191,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       .reduce((acc, t) => acc + t.amount, 0);
     
     const prevExpenses = prevMonthTransactions
-      .filter((t) => t.type === 'Expenses')
+      .filter((t) => t.type === 'Expense')
       .reduce((acc, t) => acc + t.amount, 0);
 
     // Total Stats (All time)
@@ -214,7 +200,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       .reduce((acc, t) => acc + t.amount, 0);
     
     const totalExpenses = transactions
-      .filter((t) => t.type === 'Expenses')
+      .filter((t) => t.type === 'Expense')
       .reduce((acc, t) => acc + t.amount, 0);
     
     const totalBalance = totalIncome - totalExpenses;
@@ -224,7 +210,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       .filter(t => new Date(t.date) <= lastDayPrevMonth && t.type === 'Income')
       .reduce((acc, t) => acc + t.amount, 0);
     const prevTotalExpenses = transactions
-      .filter(t => new Date(t.date) <= lastDayPrevMonth && t.type === 'Expenses')
+      .filter(t => new Date(t.date) <= lastDayPrevMonth && t.type === 'Expense')
       .reduce((acc, t) => acc + t.amount, 0);
     const prevTotalBalance = prevTotalIncome - prevTotalExpenses;
 
@@ -262,7 +248,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       .filter(t => t.type === 'Income')
       .reduce((acc, t) => acc + t.amount, 0);
     const filteredExpenses = filteredTransactions
-      .filter(t => t.type === 'Expenses')
+      .filter(t => t.type === 'Expense')
       .reduce((acc, t) => acc + t.amount, 0);
 
     setStats({
@@ -276,16 +262,15 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   }, [transactions, dateRange]);
 
   const addTransaction = (transactionData: Omit<Transaction, 'id' | 'userId'>) => {
-    if (!user) return;
     const newTransaction: Transaction = {
       ...transactionData,
       id: Math.random().toString(36).substr(2, 9),
-      userId: user.id
+      userId: user?.id || 'default-user'
     };
     setTransactions((prev) => [newTransaction, ...prev]);
   };
 
-  const addCategory = (category: string, type: 'Income' | 'Expenses') => {
+  const addCategory = (category: string, type: 'Income' | 'Expense') => {
     if (type === 'Income') {
       if (!incomeCategories.includes(category)) {
         setIncomeCategories((prev) => [...prev, category]);
@@ -298,7 +283,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const changeCurrency = (newCurrency: string) => {
-    if (!user || newCurrency === currency) return;
+    if (newCurrency === currency) return;
 
     // Mock exchange rates relative to NPR (Rs.)
     const rates: Record<string, number> = {
