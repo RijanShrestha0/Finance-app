@@ -6,8 +6,11 @@ import NotificationDropdown from "./NotificationDropdown";
 import { Bell } from "lucide-react";
 import './Header.css';
 
+interface HeaderProps {
+    activePage: string;
+}
 
-const Header = () => {
+const Header = ({ activePage }: HeaderProps) => {
     const [showNotifications, setShowNotifications] = React.useState(false);
     const { notifications = [], markAsRead, markAllAsRead } = useNotifications();
     const unreadCount = notifications.filter((n) => !n.read).length;
@@ -28,7 +31,7 @@ const Header = () => {
                     <img src="/src/assets/finance-logo.svg" alt="Finance logo" className="logo-image" />
                 </div> */}
                 <div className="dashboard-t1">
-                    Dashboard
+                    {activePage}
                 </div>
                 </h1>
             <div className="header-action">

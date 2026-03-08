@@ -1,6 +1,7 @@
 import { LayoutDashboard, ArrowLeftRight, Target, BarChart3, Settings, Download, User } from "lucide-react";
 import './Sidebar.css';
 import { Button } from "../../components/button/Button";
+import { useTransactions } from "../../hooks/useTransactions";
 
 interface SidebarProps {
     activePage: string;
@@ -16,6 +17,50 @@ const navItems = [
 ];
 
 export const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
+    const { transactions, currency } = useTransactions();
+
+    const escapeCsvValue = (value: string | number | boolean) => {
+        const stringValue = String(value ?? '');
+        if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+            return `"${stringValue.replace(/"/g, '""')}"`;
+        }
+        return stringValue;
+    };
+
+    const downloadUserDataCsv = () => {
+        const rows: Array<Array<string | number | boolean>> = [
+            ['id', 'date', 'type', 'category', 'description', 'amount', 'currency'],
+        ];
+
+        transactions.forEach((tx) => {
+            rows.push([
+                tx.id,
+                tx.date,
+                tx.type,
+                tx.category,
+                tx.description,
+                currency,
+                tx.amount
+            ]);
+        });
+
+        const csvContent = rows
+            .map((row) => row.map((cell) => escapeCsvValue(cell)).join(','))
+            .join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const today = new Date().toISOString().split('T')[0];
+
+        link.href = url;
+        link.download = `budget-tracker-data-${today}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
     return (
         <aside className="sidebar-container">
             <div className="sidebar-header">
@@ -49,7 +94,7 @@ export const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
             </div>
 
             <div className="sidebar-footer">
-                <button className="footer-item">
+                <button className="footer-item" onClick={downloadUserDataCsv}>
                     <Download className="footer-icon" />
                     <span className="footer-label">Download</span>
                 </button>

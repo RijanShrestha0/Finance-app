@@ -69,7 +69,7 @@ function App() {
     <>
     
       <Sidebar activePage={activePage} onNavigate={handleNavigate} />
-      <Headers />
+      <Headers activePage={activePage} />
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/dashboard" element={<Dashboard />} />
