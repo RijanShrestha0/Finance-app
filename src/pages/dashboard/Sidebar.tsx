@@ -17,7 +17,7 @@ const navItems = [
 ];
 
 export const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
-    const { transactions, currency } = useTransactions();
+    const { allTransactions, currency } = useTransactions();
 
     const escapeCsvValue = (value: string | number | boolean) => {
         const stringValue = String(value ?? '');
@@ -29,18 +29,21 @@ export const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
 
     const downloadUserDataCsv = () => {
         const rows: Array<Array<string | number | boolean>> = [
-            ['id', 'date', 'type', 'category', 'description', 'amount', 'currency'],
+            ['id', 'date', 'type', 'category', 'description', 'amount', 'currency', 'is_reported', 'is_deleted', 'report_reason'],
         ];
 
-        transactions.forEach((tx) => {
+        allTransactions.forEach((tx) => {
             rows.push([
                 tx.id,
                 tx.date,
                 tx.type,
                 tx.category,
                 tx.description,
+                tx.amount,
                 currency,
-                tx.amount
+                tx.isReported ? 'Yes' : 'No',
+                tx.isDeleted ? 'Yes' : 'No',
+                tx.reportReason || ''
             ]);
         });
 

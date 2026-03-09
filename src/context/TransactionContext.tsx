@@ -12,6 +12,9 @@ export interface Transaction {
   description: string;
   amount: number;
   type: 'Income' | 'Expense';
+  reportReason?: string;
+  isReported?: boolean;
+  isDeleted?: boolean;
 }
 
 export interface TransactionStats {
@@ -46,6 +49,8 @@ export interface TransactionContextType {
   budgetLimit: number;
   setBudgetLimit: (limit: number) => void;
   resetAccount: () => void;
+  reportTransaction: (id: string, reason: string, shouldDelete: boolean) => void;
+  allTransactions: Transaction[];
 }
 
 export const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
@@ -157,6 +162,9 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   }, [budgetLimit, user]);
 
   useEffect(() => {
+    // Filter out deleted transactions for stats calculation
+    const activeTransactions = transactions.filter(t => !t.isDeleted);
+    
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
@@ -166,12 +174,12 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     const lastDayPrevMonth = new Date(currentYear, currentMonth, 0);
 
     // Filter transactions
-    const currentMonthTransactions = transactions.filter(t => {
+    const currentMonthTransactions = activeTransactions.filter(t => {
       const d = new Date(t.date);
       return d >= firstDayCurrentMonth;
     });
 
-    const prevMonthTransactions = transactions.filter(t => {
+    const prevMonthTransactions = activeTransactions.filter(t => {
       const d = new Date(t.date);
       return d >= firstDayPrevMonth && d <= lastDayPrevMonth;
     });
@@ -195,21 +203,21 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       .reduce((acc, t) => acc + t.amount, 0);
 
     // Total Stats (All time)
-    const totalIncome = transactions
+    const totalIncome = activeTransactions
       .filter((t) => t.type === 'Income')
       .reduce((acc, t) => acc + t.amount, 0);
     
-    const totalExpenses = transactions
+    const totalExpenses = activeTransactions
       .filter((t) => t.type === 'Expense')
       .reduce((acc, t) => acc + t.amount, 0);
     
     const totalBalance = totalIncome - totalExpenses;
 
     // Balance at end of prev month
-    const prevTotalIncome = transactions
+    const prevTotalIncome = activeTransactions
       .filter(t => new Date(t.date) <= lastDayPrevMonth && t.type === 'Income')
       .reduce((acc, t) => acc + t.amount, 0);
-    const prevTotalExpenses = transactions
+    const prevTotalExpenses = activeTransactions
       .filter(t => new Date(t.date) <= lastDayPrevMonth && t.type === 'Expense')
       .reduce((acc, t) => acc + t.amount, 0);
     const prevTotalBalance = prevTotalIncome - prevTotalExpenses;
@@ -228,7 +236,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     };
 
     // Filtered transactions based on global dateRange
-    const filteredTransactions = transactions.filter(t => {
+    const filteredTransactions = activeTransactions.filter(t => {
       if (!dateRange?.from) return true;
       const d = new Date(t.date);
       if (dateRange.to) {
@@ -239,7 +247,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
 
     // Calculate 1 year income
     const oneYearAgo = subDays(new Date(), 365);
-    const yearlyIncome = transactions
+    const yearlyIncome = activeTransactions
       .filter(t => t.type === 'Income' && new Date(t.date) >= oneYearAgo)
       .reduce((acc, t) => acc + t.amount, 0);
 
@@ -316,8 +324,24 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const reportTransaction = (id: string, reason: string, shouldDelete: boolean) => {
+    setTransactions(prev => prev.map(t => 
+      t.id === id 
+        ? { ...t, isReported: true, reportReason: reason, isDeleted: shouldDelete }
+        : t
+    ));
+  };
+
+  // All transactions including deleted ones for CSV export
+  const allTransactions = useMemo(() => transactions, [transactions]);
+
+  // Visible transactions (exclude deleted ones)
+  const visibleTransactions = useMemo(() => {
+    return transactions.filter(t => !t.isDeleted);
+  }, [transactions]);
+
   const filteredTransactions = useMemo(() => {
-    return transactions.filter(t => {
+    return visibleTransactions.filter(t => {
       if (!dateRange?.from) return true;
       const d = new Date(t.date);
       if (dateRange.to) {
@@ -325,11 +349,11 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       }
       return d >= startOfDay(dateRange.from);
     });
-  }, [transactions, dateRange]);
+  }, [visibleTransactions, dateRange]);
 
   return (
     <TransactionContext.Provider value={{ 
-      transactions, 
+      transactions: visibleTransactions, 
       filteredTransactions,
       stats, 
       addTransaction, 
@@ -345,7 +369,9 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       changeCurrency,
       budgetLimit,
       setBudgetLimit,
-      resetAccount
+      resetAccount,
+      reportTransaction,
+      allTransactions
     }}>
       {children}
     </TransactionContext.Provider>

@@ -1,4 +1,8 @@
+import { useState } from 'react';
 import { type Transaction } from '../../context/TransactionContext';
+import { useTransactions } from '../../hooks/useTransactions';
+import { Flag } from 'lucide-react';
+import ReportModal from './ReportModal';
 
 interface TransactionsListProps {
   transactions: Transaction[];
@@ -6,6 +10,20 @@ interface TransactionsListProps {
 }
 
 export const TransactionsList = ({ transactions, currency }: TransactionsListProps) => {
+  const { reportTransaction } = useTransactions();
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [selectedTransactionId, setSelectedTransactionId] = useState<string>('');
+
+  const handleReportClick = (transactionId: string) => {
+    setSelectedTransactionId(transactionId);
+    setIsReportModalOpen(true);
+  };
+
+  const handleReport = (reason: string, shouldDelete: boolean) => {
+    reportTransaction(selectedTransactionId, reason, shouldDelete);
+    setIsReportModalOpen(false);
+  };
+
   return (
     <div className="transactions-list-card">
       <div className="list-header">
@@ -20,12 +38,13 @@ export const TransactionsList = ({ transactions, currency }: TransactionsListPro
               <th>Description</th>
               <th>Amount</th>
               <th>Type</th>
+              <th>Report</th>
             </tr>
           </thead>
           <tbody>
             {transactions.length === 0 ? (
               <tr>
-                <td colSpan={5} className="text-center py-8 text-muted">
+                <td colSpan={6} className="text-center py-8 text-muted">
                   No transactions found
                 </td>
               </tr>
@@ -41,12 +60,31 @@ export const TransactionsList = ({ transactions, currency }: TransactionsListPro
                       {t.type}
                     </span>
                   </td>
+                  <td>
+                    {t.isReported ? (
+                      <span className="reported-badge">Reported</span>
+                    ) : (
+                      <button 
+                        className="report-button" 
+                        onClick={() => handleReportClick(t.id)}
+                        title="Report this transaction"
+                      >
+                        <Flag size={16} />
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
       </div>
+
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        onReport={handleReport}
+      />
     </div>
   );
 };
