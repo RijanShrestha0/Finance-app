@@ -5,7 +5,7 @@ import Headers from './pages/dashboard/Header';
 import ToastContainer from './components/ui/ToastContainer';
 import useNotifications from './hooks/useNotifications';
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/dashboard/Dashboard';
 import Transactions from './pages/Transactions';
 import Budget from './pages/Budget';
 import Analytics from './pages/Analytics';

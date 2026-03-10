@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { type Transaction } from '../../context/TransactionContext';
+import { type Transaction } from '../dashboard/TransactionContext';
 import { useTransactions } from '../../hooks/useTransactions';
 import { Flag } from 'lucide-react';
 import ReportModal from './ReportModal';

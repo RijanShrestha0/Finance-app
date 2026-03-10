@@ -1,9 +1,9 @@
 import React from 'react';
-import StatsGrid from '../pages/dashboard/StatsGrid';
-import './GlobalStyle.css';
-import TransactionTable from './dashboard/TransactionTable';
-import FilterBar from './dashboard/FilterBar';
-import { ChartsGrid } from './dashboard/ChartsGrid';
+import StatsGrid from './StatsGrid';
+// import './GlobalStyle.css';
+import TransactionTable from './TransactionTable';
+import FilterBar from './FilterBar';
+import { ChartsGrid } from './ChartsGrid';
 
 const Dashboard: React.FC = () => {
   return (

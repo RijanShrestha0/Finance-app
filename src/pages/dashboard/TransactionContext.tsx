@@ -1,8 +1,8 @@
 import { createContext, useState, useEffect, useMemo, type ReactNode } from 'react';
 import { startOfMonth, endOfMonth, subDays, startOfDay, endOfDay } from 'date-fns';
 import type { DateRange } from 'react-day-picker';
-import { useAuth } from '../hooks/useAuth';
-import { INITIAL_INCOME_CATEGORIES, INITIAL_EXPENSE_CATEGORIES } from '../constants';
+import { useAuth } from '../../hooks/useAuth';
+import { INITIAL_INCOME_CATEGORIES, INITIAL_EXPENSE_CATEGORIES } from '../../constants';
 
 export interface Transaction {
   id: string;

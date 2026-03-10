@@ -57,7 +57,7 @@ export const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
         const today = new Date().toISOString().split('T')[0];
 
         link.href = url;
-        link.download = `budget-tracker-data-${today}.csv`;
+        link.download = `Finance-Report-${today}.csv`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
