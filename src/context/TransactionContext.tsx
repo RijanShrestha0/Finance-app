@@ -122,7 +122,6 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       const savedBudget = localStorage.getItem(`budgetLimit_${user.id}`);
       setBudgetLimit(savedBudget ? parseFloat(savedBudget) : parseFloat(localStorage.getItem('budgetLimit_default') || '0'));
     }
-    // Don't clear data when user logs out - keep showing existing data from localStorage
   }, [user]);
 
   // Save to localStorage whenever data changes

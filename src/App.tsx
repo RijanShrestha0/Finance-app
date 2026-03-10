@@ -10,11 +10,14 @@ import Transactions from './pages/Transactions';
 import Budget from './pages/Budget';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
+import useBudgetAlerts from './hooks/useBudgetAlerts';
 
 function App() {
   const location = useLocation();
   const { addNotification } = useNotifications();
   const navigate = useNavigate();
+
+  useBudgetAlerts();
 
   // Get page name from route path
   const getPageFromPath = (path: string) => {

@@ -46,6 +46,12 @@
   position: relative;
 }
 
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .datepicker-trigger {
   display: flex;
   align-items: center;
@@ -207,4 +213,51 @@
 
 .btn-primary:hover {
   opacity: 0.9;
+}
+
+.filterbar-add-transaction-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border: none;
+  border-radius: 1rem;
+  background: var(--text-main);
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.filterbar-add-transaction-btn:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .filter-bar-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .filter-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .datepicker-trigger,
+  .filterbar-add-transaction-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .datepicker-dropdown {
+    right: auto;
+    left: 0;
+    width: min(100%, 32rem);
+    min-width: 0;
+  }
 }

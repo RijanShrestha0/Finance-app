@@ -10,7 +10,8 @@ export const useTransactionsForm = () => {
     incomeCategories, 
     expenseCategories, 
     addCategory, 
-    currency 
+    currency,
+    budgetLimit
   } = useTransactions();
   
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,15 +30,67 @@ export const useTransactionsForm = () => {
       return;
     }
 
+    const parsedAmount = parseFloat(amount);
+
+    if (Number.isNaN(parsedAmount) || parsedAmount <= 0) {
+      addNotification('Please enter a valid amount');
+      return;
+    }
+
+    let budgetAlertMessage: string | null = null;
+
+    if (type === 'Expense' && budgetLimit > 0) {
+      const selectedDate = new Date(date);
+      const selectedMonth = selectedDate.getMonth();
+      const selectedYear = selectedDate.getFullYear();
+
+      const monthExpenses = transactions
+        .filter((transaction) => {
+          if (transaction.type !== 'Expense') {
+            return false;
+          }
+
+          const transactionDate = new Date(transaction.date);
+          return (
+            transactionDate.getMonth() === selectedMonth &&
+            transactionDate.getFullYear() === selectedYear
+          );
+        })
+        .reduce((sum, transaction) => sum + transaction.amount, 0);
+
+      const projectedExpenses = monthExpenses + parsedAmount;
+      const threshold80 = budgetLimit * 0.8;
+      const monthKey = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`;
+      const eightyPercentKey = `budgetAlert80_${monthKey}`;
+      const overspendKey = `budgetAlertOver_${monthKey}`;
+
+      if (monthExpenses < threshold80 && projectedExpenses >= threshold80) {
+        const remainingBeforeLimit = Math.max(budgetLimit - projectedExpenses, 0);
+        budgetAlertMessage = `Alert: This expense brings you above 80% of budget. Remaining before limit: ${currency} ${remainingBeforeLimit.toLocaleString(undefined, { maximumFractionDigits: 2 })}.`;
+        localStorage.setItem(eightyPercentKey, 'true');
+      }
+
+      if (monthExpenses <= budgetLimit && projectedExpenses > budgetLimit) {
+        const overspendBy = projectedExpenses - budgetLimit;
+        budgetAlertMessage = `Warning: This expense will exceed your budget by ${currency} ${overspendBy.toLocaleString(undefined, { maximumFractionDigits: 2 })}.`;
+        localStorage.setItem(overspendKey, 'true');
+      }
+    }
+
     addTransaction({
       date: date.replace(/-/g, '/'),
       category,
       description,
-      amount: parseFloat(amount),
+      amount: parsedAmount,
       type,
     });
 
-    addNotification(`New ${type.toLowerCase()} added: ${currency} ${parseFloat(amount).toLocaleString()}`);
+    addNotification(`New ${type.toLowerCase()} added: ${currency} ${parsedAmount.toLocaleString()}`);
+
+    // Keep threshold warning as the most visible toast when both notifications are fired.
+    if (budgetAlertMessage) {
+      addNotification(budgetAlertMessage);
+    }
     
     // Reset form
     setAmount('');
