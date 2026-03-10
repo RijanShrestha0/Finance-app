@@ -1,4 +1,6 @@
 import React from 'react';
+import ProfileCard from '../components/settings/ProfileCard';
+import './Settings.css';
 
 const Settings: React.FC = () => {
   return (
@@ -6,8 +8,9 @@ const Settings: React.FC = () => {
         <div className='Empty'>
         </div>
         <div className='page-content'>
-            <h1>Settings</h1>
-            <p>Manage your account settings and preferences here.</p>
+            <ProfileCard />
+            
+
         </div>
     </div>
   );

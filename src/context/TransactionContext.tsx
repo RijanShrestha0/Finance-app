@@ -1,8 +1,8 @@
 import { createContext, useState, useEffect, useMemo, type ReactNode } from 'react';
 import { startOfMonth, endOfMonth, subDays, startOfDay, endOfDay } from 'date-fns';
 import type { DateRange } from 'react-day-picker';
-import { useAuth } from '../../hooks/useAuth';
-import { INITIAL_INCOME_CATEGORIES, INITIAL_EXPENSE_CATEGORIES } from '../../constants';
+import { useAuth } from '../hooks/useAuth';
+import { INITIAL_INCOME_CATEGORIES, INITIAL_EXPENSE_CATEGORIES } from '../constants';
 
 export interface Transaction {
   id: string;
@@ -318,9 +318,32 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const resetAccount = () => {
+    // Reset in-memory state so UI updates immediately.
+    setTransactions([]);
+    setIncomeCategories(INITIAL_INCOME_CATEGORIES);
+    setExpenseCategories(INITIAL_EXPENSE_CATEGORIES);
+    setCurrency('Rs.');
+    setBudgetLimit(0);
+    setActiveFilter('Month');
+    setDateRange({
+      from: startOfMonth(new Date()),
+      to: endOfMonth(new Date()),
+    });
+
+    // Clear default storage used for guest/default mode.
+    localStorage.removeItem('transactions_default');
+    localStorage.removeItem('incomeCategories_default');
+    localStorage.removeItem('expenseCategories_default');
+    localStorage.removeItem('currency_default');
+    localStorage.removeItem('budgetLimit_default');
+
+    // Clear user-specific storage when authenticated.
     if (user) {
-      setTransactions([]);
       localStorage.removeItem(`transactions_${user.id}`);
+      localStorage.removeItem(`incomeCategories_${user.id}`);
+      localStorage.removeItem(`expenseCategories_${user.id}`);
+      localStorage.removeItem(`currency_${user.id}`);
+      localStorage.removeItem(`budgetLimit_${user.id}`);
     }
   };
 
