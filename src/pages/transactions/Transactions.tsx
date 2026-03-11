@@ -1,8 +1,8 @@
 import React from 'react';
-import TransactionForm from './transactions/TransactionForm';
-import { useTransactionsForm } from '../hooks/useTransactionsForm';
+import TransactionForm from './TransactionForm';
+import { useTransactionsForm } from '../../hooks/useTransactionsForm';
 import './Transactions.css';
-import { TransactionsList } from './transactions/TransactionsList';
+import { TransactionsList } from './TransactionsList';
 
 const Transactions: React.FC = () => {
   const form = useTransactionsForm();

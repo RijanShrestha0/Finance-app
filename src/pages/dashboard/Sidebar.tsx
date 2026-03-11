@@ -3,6 +3,7 @@ import './Sidebar.css';
 import { Button } from "../../components/button/Button";
 import { useTransactions } from "../../hooks/useTransactions";
 import { useAuth } from "../../hooks/useAuth";
+import useNotifications from "../../hooks/useNotifications";
 import { useNavigate } from "react-router-dom";
 
 interface SidebarProps {
@@ -21,6 +22,7 @@ const navItems = [
 export const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
     const { allTransactions, currency } = useTransactions();
     const { user, logout } = useAuth();
+    const { addNotification } = useNotifications();
     const navigate = useNavigate();
 
     const escapeCsvValue = (value: string | number | boolean) => {
@@ -32,40 +34,46 @@ export const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
     };
 
     const downloadUserDataCsv = () => {
-        const rows: Array<Array<string | number | boolean>> = [
-            ['id', 'date', 'type', 'category', 'description', 'amount', 'currency', 'is_reported', 'is_deleted', 'report_reason'],
-        ];
+        try {
+            const rows: Array<Array<string | number | boolean>> = [
+                ['id', 'date', 'type', 'category', 'description', 'amount', 'currency', 'is_reported', 'is_deleted', 'report_reason'],
+            ];
 
-        allTransactions.forEach((tx) => {
-            rows.push([
-                tx.id,
-                tx.date,
-                tx.type,
-                tx.category,
-                tx.description,
-                tx.amount,
-                currency,
-                tx.isReported ? 'Yes' : 'No',
-                tx.isDeleted ? 'Yes' : 'No',
-                tx.reportReason || ''
-            ]);
-        });
+            allTransactions.forEach((tx) => {
+                rows.push([
+                    tx.id,
+                    tx.date,
+                    tx.type,
+                    tx.category,
+                    tx.description,
+                    tx.amount,
+                    currency,
+                    tx.isReported ? 'Yes' : 'No',
+                    tx.isDeleted ? 'Yes' : 'No',
+                    tx.reportReason || ''
+                ]);
+            });
 
-        const csvContent = rows
-            .map((row) => row.map((cell) => escapeCsvValue(cell)).join(','))
-            .join('\n');
+            const csvContent = rows
+                .map((row) => row.map((cell) => escapeCsvValue(cell)).join(','))
+                .join('\n');
 
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        const today = new Date().toISOString().split('T')[0];
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const today = new Date().toISOString().split('T')[0];
 
-        link.href = url;
-        link.download = `Finance-Report-${today}.csv`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+            link.href = url;
+            link.download = `Finance-Report-${today}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            addNotification('CSV report downloaded successfully.');
+        } catch {
+            addNotification('Failed to download CSV report. Please try again.');
+        }
     };
 
     const handleLogout = () => {

@@ -1,8 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import FilterBar from './dashboard/FilterBar';
-import { useBudgetPageData } from '../hooks/useBudgetPageData';
+import FilterBar from '../dashboard/FilterBar';
+import { useBudgetPageData } from '../../hooks/useBudgetPageData';
 import './Budget.css';
+// import './GlobalStyle.css';
 
 const Budget: React.FC = () => {
   const navigate = useNavigate();

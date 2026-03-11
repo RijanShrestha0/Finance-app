@@ -1,6 +1,7 @@
 import React from 'react';
-import ProfileCard from '../components/settings/ProfileCard';
+import ProfileCard from '../../components/settings/ProfileCard';
 import './Settings.css';
+// import './GlobalStyle.css';
 
 const Settings: React.FC = () => {
   return (

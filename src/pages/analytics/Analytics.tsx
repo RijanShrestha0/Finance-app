@@ -1,9 +1,9 @@
 import React from 'react';
-import FilterBar from './dashboard/FilterBar';
-import { ChartsGrid } from './dashboard/ChartsGrid';
-import StatsGrid from './dashboard/StatsGrid';
-import { useAnalyticsInsights } from '../hooks/useAnalyticsInsights';
-import './GlobalStyle.css';
+import FilterBar from '../dashboard/FilterBar';
+import { ChartsGrid } from '../dashboard/ChartsGrid';
+import StatsGrid from '../dashboard/StatsGrid';
+import { useAnalyticsInsights } from '../../hooks/useAnalyticsInsights';
+// import './GlobalStyle.css';
 import './Analytics.css';
 
 const Analytics: React.FC = () => {

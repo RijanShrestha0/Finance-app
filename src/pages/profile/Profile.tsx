@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { useAuth } from '../hooks/useAuth';
-import useNotifications from '../hooks/useNotifications';
+import { useAuth } from '../../hooks/useAuth';
+import useNotifications from '../../hooks/useNotifications';
 import './Profile.css';
+// import './GlobalStyle.css';
 
 const Profile = () => {
   const { user, updateProfile } = useAuth();
