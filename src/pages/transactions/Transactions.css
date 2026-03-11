@@ -67,7 +67,7 @@
 }
 
 .radio-label input:checked + .radio-custom {
-  border-color: #a5c9f3;
+  border-color: var(--accent-blue);
 }
 
 .radio-label input:checked + .radio-custom::after {
@@ -78,7 +78,7 @@
   transform: translate(-50%, -50%);
   width: 0.625rem;
   height: 0.625rem;
-  background-color: #a5c9f3;
+  background-color: var(--accent-blue);
   border-radius: 50%;
 }
 
@@ -207,7 +207,7 @@
 
 .transactions-table th {
   padding: 1rem 2rem;
-  background-color: #f8f9fb;
+  background-color: var(--brand-bg);
   font-size: 0.875rem;
   font-weight: 700;
   color: var(--text-main);
@@ -222,7 +222,7 @@
 }
 
 .transactions-table tr:nth-child(even) td {
-  background-color: #f8f9fb;
+  background-color: var(--brand-bg);
 }
 
 .badge {
@@ -304,7 +304,7 @@
 }
 
 .close-btn:hover {
-  background-color: var(--bg-main);
+  background-color: var(--brand-bg);
   color: var(--text-main);
 }
 
@@ -327,7 +327,7 @@
 .form-group-modal input {
   width: 100%;
   padding: 0.75rem 1rem;
-  background-color: var(--bg-main);
+  background-color: var(--brand-bg);
   border: 1px solid var(--border-subtle);
   border-radius: 0.5rem;
   color: var(--text-main);
@@ -337,8 +337,8 @@
 }
 
 .form-group-modal input:focus {
-  border-color: #a5c9f3;
-  box-shadow: 0 0 0 4px rgba(165, 201, 243, 0.1);
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
 }
 
 .modal-footer {
@@ -367,7 +367,7 @@
 
 .btn-save-modal {
   padding: 0.625rem 1.25rem;
-  background-color: #5b92e5;
+  background-color: var(--accent-blue);
   color: white;
   border: none;
   border-radius: 0.75rem;
@@ -378,7 +378,7 @@
 }
 
 .btn-save-modal:hover {
-  background-color: #4a81d4;
+  background-color: #2563eb;
 }
 
 [data-theme='dark'] .form-group-modal input {
@@ -414,9 +414,9 @@
 }
 
 .report-button:hover {
-  background-color: #fef2f2;
-  border-color: #fecaca;
-  color: #ef4444;
+  background-color: var(--brand-bg);
+  border-color: rgba(239, 68, 68, 0.2);
+  color: var(--accent-red);
 }
 
 .reported-badge {

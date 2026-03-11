@@ -13,7 +13,7 @@
 }
 
 .report-modal-content {
-  background: white;
+  background: var(--card-bg);
   border-radius: 12px;
   width: 90%;
   max-width: 500px;
@@ -37,13 +37,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .report-modal-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--text-main);
   margin: 0;
 }
 
@@ -53,13 +53,13 @@
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 6px;
-  color: #6b7280;
+  color: var(--text-muted);
   transition: all 0.2s;
 }
 
 .report-modal-close:hover {
-  background-color: #f3f4f6;
-  color: #111827;
+  background-color: var(--brand-bg);
+  color: var(--text-main);
 }
 
 .report-modal-body {
@@ -67,35 +67,37 @@
 }
 
 .report-modal-description {
-  color: #4b5563;
+  color: var(--text-main);
   margin-bottom: 1rem;
   line-height: 1.5;
 }
 
 .report-modal-note {
-  color: #6b7280;
+  color: var(--text-muted);
   font-size: 0.875rem;
   margin-bottom: 1.5rem;
   padding: 0.75rem;
-  background-color: #f9fafb;
+  background-color: var(--brand-bg);
   border-radius: 6px;
-  border-left: 3px solid #3b82f6;
+  border-left: 3px solid var(--accent-blue);
 }
 
 .report-modal-textarea {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
   font-family: inherit;
   font-size: 0.875rem;
   resize: vertical;
   transition: border-color 0.2s;
+  background-color: var(--card-bg);
+  color: var(--text-main);
 }
 
 .report-modal-textarea:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--accent-blue);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -118,17 +120,17 @@
 
 .report-modal-btn-cancel,
 .report-modal-btn-keep {
-  background-color: #f3f4f6;
-  color: #374151;
+  background-color: var(--brand-bg);
+  color: var(--text-main);
 }
 
 .report-modal-btn-cancel:hover,
 .report-modal-btn-keep:hover {
-  background-color: #e5e7eb;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .report-modal-btn-submit {
-  background-color: #3b82f6;
+  background-color: var(--accent-blue);
   color: white;
 }
 
@@ -137,7 +139,7 @@
 }
 
 .report-modal-btn-delete {
-  background-color: #ef4444;
+  background-color: var(--accent-red);
   color: white;
 }
 

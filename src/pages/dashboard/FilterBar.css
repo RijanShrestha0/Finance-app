@@ -223,7 +223,7 @@
   border: none;
   border-radius: 1rem;
   background: var(--text-main);
-  color: #ffffff;
+  color: var(--sidebar-bg);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;

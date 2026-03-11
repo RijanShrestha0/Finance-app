@@ -1,5 +1,5 @@
 .Empty{
-    background-color: var(--bg-main);
+    background-color: var(--sidebar-bg);
     width: 250px;
     flex-shrink: 0;
 }

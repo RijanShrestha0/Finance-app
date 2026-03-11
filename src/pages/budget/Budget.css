@@ -29,7 +29,7 @@
 	border: none;
 	border-radius: 0.875rem;
 	background-color: var(--text-main);
-	color: #fff;
+	color: var(--sidebar-bg);
 	padding: 0.65rem 1.1rem;
 	font-weight: 600;
 }
@@ -78,7 +78,7 @@
 
 .status-warning {
 	background-color: rgba(245, 158, 11, 0.12);
-	color: #d97706;
+	color: var(--accent-amber);
 }
 
 .status-danger {
@@ -127,7 +127,7 @@
 }
 
 .fill-warning {
-	background-color: #f59e0b;
+	background-color: var(--accent-amber);
 }
 
 .fill-danger {
