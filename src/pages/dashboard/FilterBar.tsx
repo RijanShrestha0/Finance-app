@@ -51,7 +51,7 @@ const FilterBar = () => {
     return (
         <div className="filter-bar-wrapper">
         <div className="filter-container">
-            {['Days', 'Week', 'Month', 'Year'].map((filter) => (
+            {['Today', 'Week', 'Month', 'Year'].map((filter) => (
             <button
                 key={filter}
                 onClick={() => handleFilterClick(filter)}

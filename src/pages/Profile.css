@@ -1,0 +1,59 @@
+.profile-page-card {
+  max-width: 560px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1.2rem;
+  padding: 1.4rem;
+}
+
+.profile-title {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.5rem;
+}
+
+.profile-subtitle {
+  margin: 0.4rem 0 1rem 0;
+  color: var(--text-muted);
+}
+
+.profile-form {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.profile-label {
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.profile-input {
+  width: 100%;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.75rem;
+  background-color: var(--brand-bg);
+  color: var(--text-main);
+  padding: 0.7rem 0.85rem;
+}
+
+.profile-input:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
+}
+
+.profile-save-btn {
+  margin-top: 0.5rem;
+  border: none;
+  border-radius: 0.75rem;
+  background-color: var(--text-main);
+  color: #fff;
+  font-weight: 700;
+  padding: 0.72rem 1rem;
+}
+
+.profile-save-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

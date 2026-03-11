@@ -1,13 +1,19 @@
 import { useEffect } from 'react';
 import { useTransactions } from './useTransactions';
 import useNotifications from './useNotifications';
+import { useAuth } from './useAuth';
 
-const useBudgetAlerts = () => {
+const useBudgetAlerts = (enabled = true) => {
   const { transactions, budgetLimit, currency } = useTransactions();
   const { addNotification } = useNotifications();
+  const { user } = useAuth();
 
   useEffect(() => {
-    if (budgetLimit <= 0) {
+    if (!enabled) {
+      return;
+    }
+
+    if (!user || budgetLimit <= 0) {
       return;
     }
 
@@ -15,8 +21,8 @@ const useBudgetAlerts = () => {
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
     const monthKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
-    const eightyPercentKey = `budgetAlert80_${monthKey}`;
-    const overspendKey = `budgetAlertOver_${monthKey}`;
+    const eightyPercentKey = `budgetAlert80_${user.id}_${monthKey}`;
+    const overspendKey = `budgetAlertOver_${user.id}_${monthKey}`;
 
     const monthlyExpenses = transactions
       .filter((transaction) => {
@@ -65,7 +71,7 @@ const useBudgetAlerts = () => {
 
     localStorage.removeItem(eightyPercentKey);
     localStorage.removeItem(overspendKey);
-  }, [transactions, budgetLimit, currency, addNotification]);
+  }, [transactions, budgetLimit, currency, addNotification, enabled, user]);
 };
 
 export default useBudgetAlerts;

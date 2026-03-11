@@ -56,23 +56,13 @@ export interface TransactionContextType {
 export const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
 
 export const TransactionProvider = ({ children }: { children: ReactNode }) => {
-  const { user } = useAuth();
-  
-  // Initialize with stored data if available, regardless of user auth status
-  const [transactions, setTransactions] = useState<Transaction[]>(() => {
-    const saved = localStorage.getItem('transactions_default');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const { user, isLoading } = useAuth();
 
-  const [incomeCategories, setIncomeCategories] = useState<string[]>(() => {
-    const saved = localStorage.getItem('incomeCategories_default');
-    return saved ? JSON.parse(saved) : INITIAL_INCOME_CATEGORIES;
-  });
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+  const [incomeCategories, setIncomeCategories] = useState<string[]>(INITIAL_INCOME_CATEGORIES);
   
-  const [expenseCategories, setExpenseCategories] = useState<string[]>(() => {
-    const saved = localStorage.getItem('expenseCategories_default');
-    return saved ? JSON.parse(saved) : INITIAL_EXPENSE_CATEGORIES;
-  });
+  const [expenseCategories, setExpenseCategories] = useState<string[]>(INITIAL_EXPENSE_CATEGORIES);
 
   const [activeFilter, setActiveFilter] = useState('Month');
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
@@ -80,15 +70,9 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     to: endOfMonth(new Date()),
   });
 
-  const [currency, setCurrency] = useState<string>(() => {
-    const saved = localStorage.getItem('currency_default');
-    return saved || 'Rs.';
-  });
+  const [currency, setCurrency] = useState<string>('Rs.');
 
-  const [budgetLimit, setBudgetLimit] = useState<number>(() => {
-    const saved = localStorage.getItem('budgetLimit_default');
-    return saved ? parseFloat(saved) : 0;
-  });
+  const [budgetLimit, setBudgetLimit] = useState<number>(0);
 
   const [stats, setStats] = useState<TransactionStats>({
     totalBalance: 0,
@@ -104,60 +88,61 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     }
   });
 
-  // Load user specific data when user changes
+  // Load only user-specific data when auth state changes.
   useEffect(() => {
-    if (user) {
-      const savedTransactions = localStorage.getItem(`transactions_${user.id}`);
-      setTransactions(savedTransactions ? JSON.parse(savedTransactions) : JSON.parse(localStorage.getItem('transactions_default') || '[]'));
-      
-      const savedIncome = localStorage.getItem(`incomeCategories_${user.id}`);
-      setIncomeCategories(savedIncome ? JSON.parse(savedIncome) : JSON.parse(localStorage.getItem('incomeCategories_default') || JSON.stringify(INITIAL_INCOME_CATEGORIES)));
-      
-      const savedExpense = localStorage.getItem(`expenseCategories_${user.id}`);
-      setExpenseCategories(savedExpense ? JSON.parse(savedExpense) : JSON.parse(localStorage.getItem('expenseCategories_default') || JSON.stringify(INITIAL_EXPENSE_CATEGORIES)));
-
-      const savedCurrency = localStorage.getItem(`currency_${user.id}`);
-      setCurrency(savedCurrency || localStorage.getItem('currency_default') || 'Rs.');
-
-      const savedBudget = localStorage.getItem(`budgetLimit_${user.id}`);
-      setBudgetLimit(savedBudget ? parseFloat(savedBudget) : parseFloat(localStorage.getItem('budgetLimit_default') || '0'));
+    if (isLoading) {
+      return;
     }
-  }, [user]);
+
+    if (!user) {
+      setTransactions([]);
+      setIncomeCategories(INITIAL_INCOME_CATEGORIES);
+      setExpenseCategories(INITIAL_EXPENSE_CATEGORIES);
+      setCurrency('Rs.');
+      setBudgetLimit(0);
+      return;
+    }
+
+    const savedTransactions = localStorage.getItem(`transactions_${user.id}`);
+    setTransactions(savedTransactions ? JSON.parse(savedTransactions) : []);
+
+    const savedIncome = localStorage.getItem(`incomeCategories_${user.id}`);
+    setIncomeCategories(savedIncome ? JSON.parse(savedIncome) : INITIAL_INCOME_CATEGORIES);
+
+    const savedExpense = localStorage.getItem(`expenseCategories_${user.id}`);
+    setExpenseCategories(savedExpense ? JSON.parse(savedExpense) : INITIAL_EXPENSE_CATEGORIES);
+
+    const savedCurrency = localStorage.getItem(`currency_${user.id}`);
+    setCurrency(savedCurrency || 'Rs.');
+
+    const savedBudget = localStorage.getItem(`budgetLimit_${user.id}`);
+    setBudgetLimit(savedBudget ? parseFloat(savedBudget) : 0);
+  }, [user, isLoading]);
 
   // Save to localStorage whenever data changes
   useEffect(() => {
-    localStorage.setItem('transactions_default', JSON.stringify(transactions));
-    if (user) {
-      localStorage.setItem(`transactions_${user.id}`, JSON.stringify(transactions));
-    }
+    if (!user) return;
+    localStorage.setItem(`transactions_${user.id}`, JSON.stringify(transactions));
   }, [transactions, user]);
 
   useEffect(() => {
-    localStorage.setItem('incomeCategories_default', JSON.stringify(incomeCategories));
-    if (user) {
-      localStorage.setItem(`incomeCategories_${user.id}`, JSON.stringify(incomeCategories));
-    }
+    if (!user) return;
+    localStorage.setItem(`incomeCategories_${user.id}`, JSON.stringify(incomeCategories));
   }, [incomeCategories, user]);
 
   useEffect(() => {
-    localStorage.setItem('expenseCategories_default', JSON.stringify(expenseCategories));
-    if (user) {
-      localStorage.setItem(`expenseCategories_${user.id}`, JSON.stringify(expenseCategories));
-    }
+    if (!user) return;
+    localStorage.setItem(`expenseCategories_${user.id}`, JSON.stringify(expenseCategories));
   }, [expenseCategories, user]);
 
   useEffect(() => {
-    localStorage.setItem('currency_default', currency);
-    if (user) {
-      localStorage.setItem(`currency_${user.id}`, currency);
-    }
+    if (!user) return;
+    localStorage.setItem(`currency_${user.id}`, currency);
   }, [currency, user]);
 
   useEffect(() => {
-    localStorage.setItem('budgetLimit_default', budgetLimit.toString());
-    if (user) {
-      localStorage.setItem(`budgetLimit_${user.id}`, budgetLimit.toString());
-    }
+    if (!user) return;
+    localStorage.setItem(`budgetLimit_${user.id}`, budgetLimit.toString());
   }, [budgetLimit, user]);
 
   useEffect(() => {
@@ -272,7 +257,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     const newTransaction: Transaction = {
       ...transactionData,
       id: Math.random().toString(36).substr(2, 9),
-      userId: user?.id || 'default-user'
+      userId: user?.id || 'unknown-user'
     };
     setTransactions((prev) => [newTransaction, ...prev]);
   };
@@ -328,13 +313,6 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       from: startOfMonth(new Date()),
       to: endOfMonth(new Date()),
     });
-
-    // Clear default storage used for guest/default mode.
-    localStorage.removeItem('transactions_default');
-    localStorage.removeItem('incomeCategories_default');
-    localStorage.removeItem('expenseCategories_default');
-    localStorage.removeItem('currency_default');
-    localStorage.removeItem('budgetLimit_default');
 
     // Clear user-specific storage when authenticated.
     if (user) {

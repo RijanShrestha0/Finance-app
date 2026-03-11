@@ -10,6 +10,7 @@ interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
+  updateProfile: (name: string, email: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -71,8 +72,43 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('currentUser');
   };
 
+  const updateProfile = async (name: string, email: string) => {
+    if (!user) {
+      throw new Error('Not authenticated');
+    }
+
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const existingUser = users.find((u: any) => u.email === email && u.id !== user.id);
+
+    if (existingUser) {
+      throw new Error('Email is already used by another account');
+    }
+
+    const updatedUsers = users.map((u: any) => {
+      if (u.id !== user.id) {
+        return u;
+      }
+
+      return {
+        ...u,
+        name,
+        email,
+      };
+    });
+
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
+
+    const updatedSessionUser = {
+      ...user,
+      name,
+      email,
+    };
+    setUser(updatedSessionUser);
+    localStorage.setItem('currentUser', JSON.stringify(updatedSessionUser));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, signup, updateProfile, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

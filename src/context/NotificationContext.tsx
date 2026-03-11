@@ -1,4 +1,5 @@
 import React from "react";
+import { useAuth } from "../hooks/useAuth";
 
 export type Notification = {
     id: string;
@@ -21,17 +22,34 @@ interface NotificationContextType {
 export const NotificationContext = React.createContext<NotificationContextType | undefined>(undefined);
 
 export const NotificationProvider = ({ children }: { children: React.ReactNode }) => {
-    const [ notifications, setNotifications] = React.useState<Notification[]>(() => {
-        const saved = localStorage.getItem('notifications');
-        return saved ? JSON.parse(saved) : [];
-    });
+    const { user, isLoading } = useAuth();
+    const [ notifications, setNotifications] = React.useState<Notification[]>([]);
     const [ showToast, setShowToast ] = React.useState(false);
     const [ toastMessage, setToastMessage ] = React.useState('');
 
+    React.useEffect(() => {
+        if (isLoading) {
+            return;
+        }
+
+        if (!user) {
+            setNotifications([]);
+            setShowToast(false);
+            setToastMessage('');
+            return;
+        }
+
+        const saved = localStorage.getItem(`notifications_${user.id}`);
+        setNotifications(saved ? JSON.parse(saved) : []);
+    }, [user, isLoading]);
+
     // Save notifications to localStorage whenever they change
     React.useEffect(() => {
-        localStorage.setItem('notifications', JSON.stringify(notifications));
-    }, [notifications]);
+        if (!user) {
+            return;
+        }
+        localStorage.setItem(`notifications_${user.id}`, JSON.stringify(notifications));
+    }, [notifications, user]);
 
     const unreadCount = notifications.filter (n => !n.read).length;
 

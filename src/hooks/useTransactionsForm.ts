@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useTransactions } from './useTransactions';
 import useNotifications from './useNotifications';
+import { useAuth } from './useAuth';
 
 export const useTransactionsForm = () => {
   const { addNotification } = useNotifications();
+  const { user } = useAuth();
   const { 
     transactions, 
     addTransaction, 
@@ -61,8 +63,9 @@ export const useTransactionsForm = () => {
       const projectedExpenses = monthExpenses + parsedAmount;
       const threshold80 = budgetLimit * 0.8;
       const monthKey = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`;
-      const eightyPercentKey = `budgetAlert80_${monthKey}`;
-      const overspendKey = `budgetAlertOver_${monthKey}`;
+      const scope = user?.id || 'unknown-user';
+      const eightyPercentKey = `budgetAlert80_${scope}_${monthKey}`;
+      const overspendKey = `budgetAlertOver_${scope}_${monthKey}`;
 
       if (monthExpenses < threshold80 && projectedExpenses >= threshold80) {
         const remainingBeforeLimit = Math.max(budgetLimit - projectedExpenses, 0);

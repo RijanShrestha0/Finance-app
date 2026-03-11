@@ -5,6 +5,8 @@ import { AnimatePresence } from "motion/react";
 import NotificationDropdown from "./NotificationDropdown";
 import { Bell } from "lucide-react";
 import './Header.css';
+import { useAuth } from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
     activePage: string;
@@ -13,8 +15,11 @@ interface HeaderProps {
 const Header = ({ activePage }: HeaderProps) => {
     const [showNotifications, setShowNotifications] = React.useState(false);
     const { notifications = [], markAsRead, markAllAsRead } = useNotifications();
+    const { user } = useAuth();
+    const navigate = useNavigate();
     const unreadCount = notifications.filter((n) => !n.read).length;
     const notificationRef = React.useRef<HTMLDivElement>(null!);
+    const avatarSeed = user?.email || user?.name || 'guest-user';
 
     useClickOutside(notificationRef, () => setShowNotifications(false));
 
@@ -52,9 +57,14 @@ const Header = ({ activePage }: HeaderProps) => {
                             />
                         )}
                     </AnimatePresence>
-                    <div className="header-profile">
-                        <img src="src/assets/Profilepic.png" alt="Profile" className="header-profile-img" referrerPolicy="no-referrer" />
-                    </div>
+                    <button className="header-profile" onClick={() => navigate('/profile')} title="Open profile">
+                        <img
+                            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${avatarSeed}`}
+                            alt="Profile"
+                            className="header-profile-img"
+                            referrerPolicy="no-referrer"
+                        />
+                    </button>
                 </div>
             </div>
         </header>

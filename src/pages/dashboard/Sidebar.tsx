@@ -1,7 +1,9 @@
-import { LayoutDashboard, ArrowLeftRight, Target, BarChart3, Settings, Download, User } from "lucide-react";
+import { LayoutDashboard, ArrowLeftRight, Target, BarChart3, Settings, Download, User, LogOut } from "lucide-react";
 import './Sidebar.css';
 import { Button } from "../../components/button/Button";
 import { useTransactions } from "../../hooks/useTransactions";
+import { useAuth } from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 interface SidebarProps {
     activePage: string;
@@ -18,6 +20,8 @@ const navItems = [
 
 export const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
     const { allTransactions, currency } = useTransactions();
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
 
     const escapeCsvValue = (value: string | number | boolean) => {
         const stringValue = String(value ?? '');
@@ -64,6 +68,11 @@ export const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
         URL.revokeObjectURL(url);
     };
 
+    const handleLogout = () => {
+        logout();
+        navigate('/signin');
+    };
+
     return (
         <aside className="sidebar-container">
             <div className="sidebar-header">
@@ -101,9 +110,13 @@ export const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
                     <Download className="footer-icon" />
                     <span className="footer-label">Download</span>
                 </button>
-                <button className="footer-item">
+                <button className="footer-item" onClick={() => navigate('/profile')}>
                     <User className="footer-icon" />
-                    <span className="footer-label">User Name</span>
+                    <span className="footer-label">{user?.name || 'User'}</span>
+                </button>
+                <button className="footer-item" onClick={handleLogout}>
+                    <LogOut className="footer-icon" />
+                    <span className="footer-label">Logout</span>
                 </button>
             </div>
         </aside>

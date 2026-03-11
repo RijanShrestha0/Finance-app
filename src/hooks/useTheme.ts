@@ -3,24 +3,32 @@ import { useEffect, useState } from "react";
 export type useTheme = 'light' | 'dark' | 'system';
 
 export const useTheme = () => {
-    const [ theme, settheme ] = useState<useTheme>('light');
-    
-    useEffect(() => {
+    const [ theme, settheme ] = useState<useTheme>(() => {
         const savedTheme = localStorage.getItem('theme') as useTheme | null;
-        if (savedTheme) {
-            settheme(savedTheme);
+
+        if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system') {
+            return savedTheme;
         }
-        else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            settheme('dark');
+
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark';
         }
-    }, []);
+
+        return 'light';
+    });
     
     useEffect(() => {
-        if ( theme === 'dark') {
+        const resolvedTheme = theme === 'system'
+            ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+            : theme;
+
+        if (resolvedTheme === 'dark') {
             document.documentElement.classList.add('dark');
         } else {
             document.documentElement.classList.remove('dark');
         }
+
+        document.documentElement.setAttribute('data-theme', resolvedTheme);
         localStorage.setItem('theme', theme);
     }, [theme]);
 

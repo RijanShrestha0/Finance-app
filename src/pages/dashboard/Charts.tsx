@@ -71,7 +71,7 @@ export const ExpensePieChart = () => {
 // export default ExpensePieChart;
 
 export const SavingTrendChart = () => {
-    const { transactions, filteredTransactions, activeFilter } = useTransactions();
+  const { transactions, filteredTransactions, activeFilter, currency } = useTransactions();
       const { trendData, trendPercentage } = useMemo(() => {
     // Sort by date
     const sorted = [...filteredTransactions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
@@ -150,7 +150,7 @@ export const SavingTrendChart = () => {
                 color: 'var(--text-main)'
               }}
               itemStyle={{ color: 'var(--text-main)' }}
-              formatter={(value: number | undefined) => [`Rs. ${value?.toLocaleString() ?? '0'}`, 'Balance']}
+              formatter={(value: number | undefined) => [`${currency} ${value?.toLocaleString() ?? '0'}`, 'Balance']}
             />
             <Area 
               type="monotone" 
